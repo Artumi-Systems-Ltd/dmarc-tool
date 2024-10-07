@@ -1,0 +1,9 @@
+config.php
+*.db
+*.swp
+*.swo
+*.swq
+*.swn
+.phpcd/
+vendor/
+.env
