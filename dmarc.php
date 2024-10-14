@@ -79,6 +79,7 @@ $db->exec("CREATE TABLE IF NOT EXISTS dmarc_reports (
 
 // Fetch emails
 $emails = imap_search($imapStream, 'ALL');
+print "Processing emailed records:\n";
 if ($emails) {
     foreach ($emails as $emailNumber) {
         $structure = imap_fetchstructure($imapStream, $emailNumber);
@@ -177,6 +178,7 @@ if ($emails) {
                     $stmt->execute([$domain, $reportOrg, $envelope_from, $envelope_to, $sourceIp, $count, $date]);
                 }
 
+		print "+";
                 // Move email to processed folder
                 imap_mail_move($imapStream, $emailNumber, $config['processed_folder']);
                 break; // Stop processing after finding the correct attachment
@@ -184,12 +186,14 @@ if ($emails) {
         }
 
         if (!$foundXml) {
-            // Move email to failed folder if no XML data is found
+	    // Move email to failed folder if no XML data is found
+	    print '-';
             imap_mail_move($imapStream, $emailNumber, $config['failed_folder']);
         }
     }
     imap_expunge($imapStream);
 }
+print "\n";
 
 // Close IMAP connection
 imap_close($imapStream);
